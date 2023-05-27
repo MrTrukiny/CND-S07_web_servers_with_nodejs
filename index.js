@@ -4,20 +4,34 @@ const PORT = 3000;
 
 const server = http.createServer();
 
+const friends = [
+  {
+    id: 0,
+    name: 'Nikola Tesla',
+  },
+  {
+    id: 1,
+    name: 'Sir Isaac Newton',
+  },
+  {
+    id: 2,
+    name: 'Albert Einstein',
+  },
+];
+
 server.on('request', (req, res) => {
-  if (req.url === '/friends') {
-    // res.writeHead(200, { 'Content-Type': 'application/json' });
-    // We can manually set the status code and headers
+  // We can use req.url to determine what the user is requesting and get parameters from the url
+  const items = req.url.split('/'); // /friends/1 => ['','friends','1']
+  if (items[1] === 'friends') {
     res.statusCode = 200;
     res.setHeader('Content-Type', 'application/json');
-    res.end(
-      JSON.stringify({
-        id: 1,
-        name: 'Sir Isaac Newton',
-      })
-    );
-  } else if (req.url === '/messages') {
-    // Status code defaults to 200
+    if (items.length === 3) {
+      const friendIndex = parseInt(items[2]);
+      res.end(JSON.stringify(friends[friendIndex]));
+    } else {
+      res.end(JSON.stringify(friends));
+    }
+  } else if (items[1] === 'messages') {
     res.setHeader('Content-Type', 'text/html');
     res.write('<html>');
     res.write('<body>');
