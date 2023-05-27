@@ -20,14 +20,15 @@ const friends = [
 ];
 
 server.on('request', (req, res) => {
-  // We can use req.url to determine what the user is requesting and get parameters from the url
-  const items = req.url.split('/'); // /friends/1 => ['','friends','1']
+  const items = req.url.split('/'); 
   if (req.method === 'POST' && items[1] === 'friends') {
     req.on('data', (data) => {
       const friend = data.toString();
       console.log('Request:', friend);
       friends.push(JSON.parse(friend));
     });
+    // Remember that req and res are streams. We can pipe them together to pass data from one to the other.
+    req.pipe(res);
   } else if (items[1] === 'friends') {
     res.statusCode = 200;
     res.setHeader('Content-Type', 'application/json');
@@ -56,4 +57,4 @@ server.on('request', (req, res) => {
 
 server.listen(PORT, () => {
   console.log(`Server is running on port ${PORT}`);
-}); //127.0.0.1 => localhost
+});
